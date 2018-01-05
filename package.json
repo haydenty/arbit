@@ -1,0 +1,14 @@
+{
+  "name": "arbit",
+  "version": "1.0.0",
+  "description": "crypto arbitrage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hayden ty",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.83.0"
+  }
+}
