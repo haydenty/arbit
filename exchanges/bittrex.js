@@ -13,7 +13,8 @@ var bittrex = {
         });
     },
     getFee: function (coinTicker, howMuchCoinUSD, success, error) {
-        success(1);
+        //https://bittrex.com/Fees
+        success(howMuchCoinUSD * 0.0025);
     },
     buyCoin: function (coinTicker, howMuchCoinUSD, success, error) {
         success();

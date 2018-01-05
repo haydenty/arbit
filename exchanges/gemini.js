@@ -15,7 +15,7 @@ var gemini = {
     },
     getFee: function (coinTicker, howMuchCoinUSD, success, error) {
         //https://gemini.com/fee-schedule/#fee-schedule
-        const fee = howMuchCoinUSD * .25;
+        const fee = howMuchCoinUSD * 0.0025;
         success(fee);
     },
     buyCoin: function (coinTicker, howMuchCoinUSD, success, error) {

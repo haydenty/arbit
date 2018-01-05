@@ -25,7 +25,8 @@ var kraken = {
         });
     },
     getFee: function (coinTicker, howMuchCoinUSD, success, error) {
-        success(1);
+        //https://www.kraken.com/en-us/help/fees
+        success(howMuchCoinUSD * 0.0026);
     },
     buyCoin: function (coinTicker, howMuchCoinUSD, success, error) {
         success();

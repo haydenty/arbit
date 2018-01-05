@@ -8,19 +8,20 @@ var binance = {
                 error(err);
             } else {
                 var resp = JSON.parse(body);
-                for (var i = 0; i < resp.count; i++) {
+                for (var i = 0; i < resp.length; i++) {
                     if ((resp[i].symbol == 'BTCUSDT' && coinTicker == 'btc')
                         || (resp[i].symbol == 'ETHUSDT' && coinTicker == 'eth')
-                        || (resp[i].symbol == 'LTCUSDT' && coinTicker == 'eth')                      
+                        || (resp[i].symbol == 'LTCUSDT' && coinTicker == 'ltc')                      
                     ) {
-                        success(resp[i].price);
+                        success(resp[i].price++);
                     }
                 }
             }
         });
     },
     getFee: function (coinTicker, howMuchCoinUSD, success, error) {
-        success(1);
+        //https://support.binance.com/hc/en-us/articles/115000429332
+        success(howMuchCoinUSD * 0.001);
     },
     buyCoin: function (coinTicker, howMuchCoinUSD, success, error) {
         success();
