@@ -1,6 +1,5 @@
-//TODO: 
-//1. implement exchanges code
-//2. console.log to text file or csv -> will be used for future use to catch trends between exchange
+//FUTURE TODOs: 
+//1. console.log to text file or csv -> will be used for future use to catch trends between exchange
 let bittrexExchange = require('./exchanges/bittrex');
 let gdaxExchange = require('./exchanges/gdax');
 let geminiExchange = require('./exchanges/gemini');
@@ -10,17 +9,17 @@ let binanceExchange = require('./exchanges/binance');
 let app = {
     getPrices: function (success, error) {
         let bittrexReturned = false;//change to true if not using
-        let gdaxReturned = false;
-        let geminiReturned = false;
+        let gdaxReturned = true;
+        let geminiReturned = true;
         let krakenReturned = false;
-        let binanceReturned = true;
+        let binanceReturned = false;
 
         let thePrices = {
             bittrexPrice: undefined,//comment out if not using and below code chunk
-            gdaxPrice: undefined,
-            geminiPrice: undefined,
+            //gdaxPrice: undefined,
+            //geminiPrice: undefined,
             krakenPrice: undefined,
-           // binancePrice: undefined
+            binancePrice: undefined
         };
 
         bittrexExchange.getPrice(coinTicker, function (price) {
@@ -32,23 +31,23 @@ let app = {
             }
         }, error);
 
-        gdaxExchange.getPrice(coinTicker, function (price) {
-            thePrices.gdaxPrice = price;
-            gdaxReturned = true;
-            if (bittrexReturned && gdaxReturned && geminiReturned
-                && krakenReturned && binanceReturned) {
-                success(thePrices);
-            }
-        }, error);
+        // gdaxExchange.getPrice(coinTicker, function (price) {
+        //     thePrices.gdaxPrice = price;
+        //     gdaxReturned = true;
+        //     if (bittrexReturned && gdaxReturned && geminiReturned
+        //         && krakenReturned && binanceReturned) {
+        //         success(thePrices);
+        //     }
+        // }, error);
 
-        geminiExchange.getPrice(coinTicker, function (price) {
-            thePrices.geminiPrice = price;
-            geminiReturned = true;
-            if (bittrexReturned && gdaxReturned && geminiReturned
-                && krakenReturned && binanceReturned) {
-                success(thePrices);
-            }
-        }, error);
+        // geminiExchange.getPrice(coinTicker, function (price) {
+        //     thePrices.geminiPrice = price;
+        //     geminiReturned = true;
+        //     if (bittrexReturned && gdaxReturned && geminiReturned
+        //         && krakenReturned && binanceReturned) {
+        //         success(thePrices);
+        //     }
+        // }, error);
 
         krakenExchange.getPrice(coinTicker, function (price) {
             thePrices.krakenPrice = price;
@@ -59,14 +58,14 @@ let app = {
             }
         }, error);
 
-        // binanceExchange.getPrice(coinTicker, function (price) {
-        //     thePrices.binancePrice = price;
-        //     binanceReturned = true;
-        //     if (bittrexReturned && gdaxReturned && geminiReturned
-        //         && krakenReturned && binanceReturned) {
-        //         success(thePrices);
-        //     }
-        // }, error);
+        binanceExchange.getPrice(coinTicker, function (price) {
+            thePrices.binancePrice = price;
+            binanceReturned = true;
+            if (bittrexReturned && gdaxReturned && geminiReturned
+                && krakenReturned && binanceReturned) {
+                success(thePrices);
+            }
+        }, error);
     },
     getMaxPrice: function (thePrices) {
         let arr = Object.values(thePrices);
@@ -204,11 +203,14 @@ let app = {
             console.log('Max exchange ' + maxExchangeName + ' fees are: ' + fees.maxExchangeFee);
             console.log('****************************************');
             const diff = max - min;
+            const roiPercent = diff / min * 100;
             const minExchangeFee = fees.minExchangeFee;
             const maxExchangeFee = fees.maxExchangeFee;
-            const totalFees = minExchangeFee + maxExchangeFee;
+            const sendTransferFee = 5;//USD TODO: determine if this changes between exchanges
+            const totalFees = minExchangeFee + maxExchangeFee + sendTransferFee;
             if (diff - totalFees > 1) {//TODO: decide on threshold - 10USD
-                console.log('After this trade you will profit: ', (diff - totalFees));
+                console.log('ROI of trade: ', roiPercent, '%');
+                console.log('After this trade you will profit: $', roiPercent * howMuchCoinUSD / 100);
                 console.log('****************************************');
                 callback(true);
             }
@@ -223,12 +225,13 @@ let app = {
 };
 
 //Main Program - Arbit
+//Start here
 //1.Choose currency: LTC, BTC, ETH
 //Note: Gemini only has btc and eth
-const coinTicker = 'btc';
-const howMuchCoinUSD = 100;
+const coinTicker = 'eth';
+const howMuchCoinUSD = 22;
 
-//2.To start: do 'node arbit.js' from cmd line
+//2.To run: do 'node arbit.js' from cmd line
 console.log('****************************************');
 console.log('Starting arbit for ' + coinTicker + ' and risking $' + howMuchCoinUSD + '...');
 console.log('****************************************');
@@ -239,8 +242,8 @@ app.getPrices(function (thePrices) {
     const maxExchange = app.getExchangeFromPrice(max, thePrices);
     const min = app.getMinPrice(thePrices);
     const minExchange = app.getExchangeFromPrice(min, thePrices);
-    console.log('Max exchange: ' + maxExchange + ' at ' + max);
     console.log('Min exchange: ' + minExchange + ' at ' + min);
+    console.log('Max exchange: ' + maxExchange + ' at ' + max);    
     console.log('****************************************');
 
     if (min !== max) {
